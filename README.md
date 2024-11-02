@@ -34,6 +34,18 @@ webview.run()
 
 TBD
 
+# TODO
+- [ ] Add bind example
+- [ ] Polish README.md
+- [ ] Publish to PyPI
+- [ ] Use github actions to build and publish to PyPI when new tag is pushed
+- [ ] Add preact example
+- [ ] Add three.js example
+- [ ] Add three.js fiber example
+- [ ] Add screen saver 4 window example
+- [ ] Add MRI principle demo example by three.js fiber
+- [ ] Add screen saver 4 windows with MRI principle demo example by three.js fiber
+
 # License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
