@@ -19,11 +19,12 @@ def _get_lib_name():
     system = platform.system().lower()
     machine = platform.machine().lower()
     
+    # ref: https://github.com/webview/webview_deno/releases/tag/0.8.1/
     if system == "windows":
         if machine == "amd64" or machine == "x86_64":
-            return "webview.x86_64.dylib"
+            return "webview.dll"
         elif machine == "arm64":
-            return "libwebview.aarch64.dylib"
+            raise Exception("arm64 is not supported on Windows")
     elif system == "darwin":
         if machine == "arm64":
             return "libwebview.aarch64.dylib"
