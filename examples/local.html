@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <title>Local Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+        }
+
+        #output {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+        }
+    </style>
+    <script>
+        let count = 0;
+
+        function updateDisplay() {
+            const output = document.getElementById('output');
+            output.innerHTML = `
+                <p>Count: ${count}</p>
+                <p>Last updated: ${new Date().toLocaleTimeString()}</p>
+            `;
+        }
+
+        function increment() {
+            count++;
+            updateDisplay();
+        }
+
+        function reset() {
+            count = 0;
+            updateDisplay();
+        }
+
+        // 初始化显示
+        document.addEventListener('DOMContentLoaded', updateDisplay);
+    </script>
+</head>
+
+<body>
+    <h1>Local Demo</h1>
+
+    <div class="card">
+        <h2>Counter Demo</h2>
+        <button onclick="increment()">Increment</button>
+        <button onclick="reset()">Reset</button>
+        <div id="output"></div>
+    </div>
+</body>
+
+</html>
