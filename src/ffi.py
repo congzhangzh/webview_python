@@ -79,7 +79,7 @@ def _be_sure_library():
     if system != "windows":
         lib_path.chmod(lib_path.stat().st_mode | 0o755)
     
-    return lib_path
+    return str(lib_path)
 
 class _WebviewLibrary:
     def __init__(self):
