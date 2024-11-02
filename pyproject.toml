@@ -43,3 +43,10 @@ target-version = ['py37']
 [tool.isort]
 profile = "black"
 line_length = 100
+
+[tool.setuptools.package-data]
+webview = [
+    "lib/*.dll",    # Windows
+    "lib/*.so",     # Linux
+    "lib/*.dylib"   # macOS
+]

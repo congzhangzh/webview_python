@@ -10,7 +10,6 @@ pip install webview
 
 ## Usage
 
-
 ### Display Inline HTML:
 
 ```python
@@ -45,16 +44,13 @@ webview.run()
 ### Load Remote URL:
 
 ```python
-```python
 from webview import Webview
 webview = Webview()
 webview.navigate("https://www.python.org")
 webview.run()
 ```
 
-### Python-JavaScript Bindings
-
-Example of bidirectional communication between Python and JavaScript:
+### Python-JavaScript Bindings:
 
 ```python
 from webview import Webview, Size, SizeHint
@@ -123,6 +119,28 @@ webview.run()
 
 ## Development
 
+### Setup Development Environment
+
+```bash
+# Install Python build tools
+pip install --upgrade pip build twine
+
+# Install GitHub CLI (choose one based on your OS):
+# macOS
+brew install gh
+
+# Windows
+winget install GitHub.cli
+# or
+choco install gh
+
+# Linux (Debian/Ubuntu)
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+&& sudo apt update \
+&& sudo apt install gh
+```
+
 ### Running Tests
 
 ```bash
@@ -141,6 +159,48 @@ webview_python/
 └── README.md          # Documentation
 ```
 
+### Release Process
+
+For maintainers who want to release a new version:
+
+1. **Update Version**
+   ```bash
+   # Ensure you have the latest code
+   git pull origin main
+   
+   # Update version in pyproject.toml
+   # Edit version = "x.y.z" to new version number
+   ```
+
+2. **Create Release**
+   ```bash
+   # Commit changes
+   git add pyproject.toml
+   git commit -m "Bump version to x.y.z"
+   git push origin main
+
+   # Create and push tag
+   git tag vx.y.z
+   git push origin vx.y.z
+
+   # Create GitHub release
+   gh release create vx.y.z --title "vx.y.z" --notes "Release notes for version x.y.z"
+   ```
+
+3. **Monitor Release**
+   - Check GitHub Actions progress in the Actions tab
+   - Verify package on PyPI after workflow completion
+
+### First-time Release Setup
+
+1. **PyPI Setup**
+   - Create account: https://pypi.org/account/register/
+   - Generate API token: https://pypi.org/manage/account/token/
+
+2. **GitHub Setup**
+   - Repository Settings → Secrets and variables → Actions
+   - Add new secret: `PYPI_API_TOKEN` with PyPI token value
+
 ## Roadmap
 
 - [ ] Publish to PyPI
@@ -151,6 +211,11 @@ webview_python/
 - [ ] Add screen saver 4 window example
 - [ ] Add MRI principle demo example by three.js fiber
 - [ ] Add screen saver 4 windows with MRI principle demo example by three.js fiber
+
+## References
+
+- [Webview](https://github.com/webview/webview)
+- [webview_deno](https://github.com/eliassjogreen/webview_deno)
 
 # License
 
