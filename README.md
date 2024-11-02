@@ -182,16 +182,17 @@ For maintainers who want to release a new version:
 2. **Create Release**
    ```bash
    # Commit changes
+   version=0.99.0
    git add pyproject.toml
-   git commit -m "Bump version to x.y.z"
+   git commit -m "Bump version to ${version}"
    git push origin main
 
    # Create and push tag
-   git tag vx.y.z
-   git push origin vx.y.z
+   git tag v${version}
+   git push origin v${version}
 
    # Create GitHub release
-   gh release create vx.y.z --title "vx.y.z" --notes "Release notes for version x.y.z"
+    gh release create v${version} --title "v${version}" --notes "Release version ${version}"
    ```
 
 3. **Monitor Release**
