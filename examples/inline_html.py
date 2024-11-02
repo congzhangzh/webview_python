@@ -1,4 +1,5 @@
 from webview import Webview
+from urllib.parse import quote
 
 html = """
 <html>
@@ -9,5 +10,5 @@ html = """
 """
 
 webview = Webview()
-webview.navigate(f"data:text/html,{html}")
+webview.navigate(f"data:text/html,{quote(html)}")
 webview.run()
