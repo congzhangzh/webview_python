@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         #os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
     
@@ -27,7 +27,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libwebkit2gtk-4.0-dev xvfb
           python -m pip install --upgrade pip
           pip install -e .
           pip install pytest pytest-cov
@@ -46,7 +46,13 @@ jobs:
           pip install -e .
           pip install pytest pytest-cov
       
-      - name: Run tests
+      - name: Run tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          xvfb-run --auto-servernum pytest tests/ --cov=webview --cov-report=xml
+      
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
         run: |
           pytest tests/ --cov=webview --cov-report=xml
       
