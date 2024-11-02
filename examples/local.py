@@ -1,4 +1,4 @@
-from python_webview import Webview
+from webview import Webview
 
 html = """
 <html>

@@ -1,5 +1,5 @@
 import unittest
-from python_webview import Webview, Size, SizeHint
+from webview import Webview, Size, SizeHint
 
 class TestWebview(unittest.TestCase):
     def test_create_webview(self):

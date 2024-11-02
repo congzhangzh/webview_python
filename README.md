@@ -4,13 +4,13 @@ Python bindings for the webview library, allowing you to create desktop applicat
 
 ## Installation
 bash
-pip install python-webview
+pip install webview
 
 ## Usage
 
 ### Local HTML
 ```python
-from python_webview import Webview
+from webview import Webview
 html = """
 <html>
 <body>
@@ -18,9 +18,6 @@ html = """
 </body>
 </html>
 """
-webview = Webview()
-webview.navigate(f"data:text/html,{html}")
-webview.run()
 webview = Webview()
 webview.navigate(f"data:text/html,{html}")
 webview.run()
@@ -32,6 +29,10 @@ webview = Webview()
 webview.navigate("https://www.python.org")
 webview.run()
 ```
+
+### Bindings
+
+TBD
 
 # License
 
