@@ -15,56 +15,40 @@ def _get_webview_version():
     return os.getenv("WEBVIEW_VERSION", "0.8.1")
 
 def _get_lib_name():
+    """Get platform-specific library name."""
     system = platform.system().lower()
     machine = platform.machine().lower()
     
-    # Map architecture names
-    arch_map = {
-        'x86_64': 'x64',
-        'amd64': 'x64',
-        'arm64': 'arm64',
-        'aarch64': 'arm64',
-    }
-
-    arch = arch_map.get(machine, machine)
     if system == "windows":
-        lib_name = "webview.dll" # TODO: or native WebView2Loader.dll
+        if machine == "amd64" or machine == "x86_64":
+            return "webview.x86_64.dylib"
+        elif machine == "arm64":
+            return "libwebview.aarch64.dylib"
     elif system == "darwin":
-        if arch=="arm64":
-            lib_name = "libwebview.aarch64.dylib"
+        if machine == "arm64":
+            return "libwebview.aarch64.dylib"
         else:
-            lib_name = "libwebview.x86_64.dylib"
-    else:  # Linux
-        lib_name = "libwebview.so"
-
-    return lib_name
+            return "libwebview.x86_64.dylib"
+    else:  # linux
+        return "libwebview.so"
 
 def _get_download_url():
     """Get the appropriate download URL based on the platform."""
-
-    
-    # Check for custom URL in environment
-    custom_url = os.getenv("WEBVIEW_URL")
-    if custom_url:
-        return custom_url
-
-
     version = _get_webview_version()
-    lib_name=_get_lib_name()
-
-    # Following webview_deno URL pattern
-    download_url = rf"https://github.com/webview/webview_deno/releases/download/{version}/{lib_name}"
-
-    return download_url
+    lib_name = _get_lib_name()
+    return f"https://github.com/webview/webview_deno/releases/download/{version}/{lib_name}"
 
 def _be_sure_library():
-    
-        # make it work even after PyInstaller
+    """Ensure library exists and return path."""
     if getattr(sys, 'frozen', False):
-        lib_dir = Path(__file__).parent / "lib"
+        if hasattr(sys, '_MEIPASS'):  # onefile 模式
+            base_dir = Path(sys._MEIPASS)
+        else:  # onedir 模式
+            base_dir = Path(sys.executable).parent / '_internal'
     else:
-        lib_dir = Path(__file__).parent.parent / "lib"
-
+        base_dir = Path(__file__).parent
+    
+    lib_dir = base_dir / "lib"
     lib_name = _get_lib_name()
     lib_path = lib_dir / lib_name
 
