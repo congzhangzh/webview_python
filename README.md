@@ -3,9 +3,9 @@
 [![Test - Windows](https://github.com/congzhangzh/webview_python/actions/workflows/test.yml/badge.svg?branch=main&label=Windows)](https://github.com/congzhangzh/webview_python/actions)
 [![Test - Linux](https://github.com/congzhangzh/webview_python/actions/workflows/test.yml/badge.svg?branch=main&label=Linux)](https://github.com/congzhangzh/webview_python/actions)
 [![Test - macOS](https://img.shields.io/badge/macOS-not%20tested-yellow)](https://github.com/congzhangzh/webview_python/issues)
-[![PyPI version](https://badge.fury.io/py/webview.svg)](https://badge.fury.io/py/webview)
+[![PyPI version](https://badge.fury.io/py/webview_python.svg)](https://badge.fury.io/py/webview_python)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/pypi/pyversions/webview.svg)](https://pypi.org/project/webview/)
+[![Python Version](https://img.shields.io/pypi/pyversions/webview_python.svg)](https://pypi.org/project/webview_python/)
 
 Python bindings for the webview library, allowing you to create desktop applications with web technologies.
 
