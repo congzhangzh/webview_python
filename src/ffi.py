@@ -79,7 +79,7 @@ def _be_sure_library():
     if system != "windows":
         lib_path.chmod(lib_path.stat().st_mode | 0o755)
     
-    return str(lib_path)
+    return lib_path
 
 class _WebviewLibrary:
     def __init__(self):
@@ -88,7 +88,7 @@ class _WebviewLibrary:
             library_path = ctypes.util.find_library(lib_name)
             if not library_path:
                 library_path = _be_sure_library()
-            self.lib = ctypes.cdll.LoadLibrary(library_path)
+            self.lib = ctypes.cdll.LoadLibrary(str(library_path))
         except Exception as e:
             print(f"Failed to load webview library: {e}")
             raise
