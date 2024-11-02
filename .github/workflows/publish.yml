@@ -41,7 +41,8 @@ jobs:
           pip install build wheel
 
       - name: Download platform binary
-        run: python -c "from webview.ffi import _download_library; _download_library()"
+        run: |
+          python -c "import os, sys; sys.path.append(os.path.join(os.getcwd(), 'src')); from webview.ffi import _download_library; _download_library()"
 
       - name: Build wheels
         run: |
