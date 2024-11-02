@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>Python-JavaScript Binding Demo</title>
+    <script>
+        // 定义所有的 JavaScript 函数
+        async function callPython() {
+            try {
+                const result = await hello();
+                document.getElementById('result').innerHTML = result;
+            } catch (err) {
+                console.error('Error calling Python:', err);
+            }
+        }
+
+        async function callPythonWithArgs() {
+            try {
+                const result = await add(40, 2);
+                document.getElementById('result').innerHTML = `Result: ${result}`;
+            } catch (err) {
+                console.error('Error calling Python:', err);
+            }
+        }
+
+        function updateFromPython(message) {
+            document.getElementById('result').innerHTML = `Python says: ${message}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Python-JavaScript Binding Demo</h1>
+    
+    <button onclick="callPython()">Call Python</button>
+    <button onclick="callPythonWithArgs()">Call Python with Args</button>
+    
+    <div id="result"></div>
+</body>
+</html>

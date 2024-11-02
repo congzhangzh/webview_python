@@ -1,6 +1,7 @@
 from enum import IntEnum
 from typing import Optional, Callable, Any
 import json
+import ctypes
 from ffi import _webview_lib, _encode_c_string
 
 class SizeHint(IntEnum):
@@ -66,7 +67,7 @@ class Webview:
                 success = False
             self.return_(seq.decode(), 0 if success else 1, json.dumps(result))
 
-        c_callback = _webview_lib.CFUNCTYPE(None, _webview_lib.c_char_p, _webview_lib.c_char_p, _webview_lib.c_void_p)(wrapper)
+        c_callback = _webview_lib.CFUNCTYPE(None, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_void_p)(wrapper)
         self._callbacks[name] = c_callback
         _webview_lib.webview_bind(self._handle, _encode_c_string(name), c_callback, None)
 
