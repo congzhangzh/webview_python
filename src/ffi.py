@@ -14,81 +14,84 @@ def _get_webview_version():
     """Get webview version from environment variable or use default"""
     return os.getenv("WEBVIEW_VERSION", "0.8.1")
 
-def _get_lib_name():
-    """Get platform-specific library name."""
+def _get_lib_names():
+    """Get platform-specific library names."""
     system = platform.system().lower()
     machine = platform.machine().lower()
     
-    # ref: https://github.com/webview/webview_deno/releases/tag/0.8.1/
     if system == "windows":
         if machine == "amd64" or machine == "x86_64":
-            return "webview.dll"
+            return ["webview.dll", "WebView2Loader.dll"]
         elif machine == "arm64":
             raise Exception("arm64 is not supported on Windows")
     elif system == "darwin":
         if machine == "arm64":
-            return "libwebview.aarch64.dylib"
+            return ["libwebview.aarch64.dylib"]
         else:
-            return "libwebview.x86_64.dylib"
+            return ["libwebview.x86_64.dylib"]
     else:  # linux
-        return "libwebview.so"
+        return ["libwebview.so"]
 
-def _get_download_url():
-    """Get the appropriate download URL based on the platform."""
+def _get_download_urls():
+    """Get the appropriate download URLs based on the platform."""
     version = _get_webview_version()
-    lib_name = _get_lib_name()
-    return f"https://github.com/webview/webview_deno/releases/download/{version}/{lib_name}"
+    return [f"https://github.com/webview/webview_deno/releases/download/{version}/{lib_name}" 
+            for lib_name in _get_lib_names()]
 
-def _be_sure_library():
-    """Ensure library exists and return path."""
+def _be_sure_libraries():
+    """Ensure libraries exist and return paths."""
     if getattr(sys, 'frozen', False):
-        if hasattr(sys, '_MEIPASS'):  # onefile 模式
+        if hasattr(sys, '_MEIPASS'):
             base_dir = Path(sys._MEIPASS)
-        else:  # onedir 模式
+        else:
             base_dir = Path(sys.executable).parent / '_internal'
     else:
         base_dir = Path(__file__).parent
     
     lib_dir = base_dir / "lib"
-    lib_name = _get_lib_name()
-    lib_path = lib_dir / lib_name
+    lib_names = _get_lib_names()
+    lib_paths = [lib_dir / lib_name for lib_name in lib_names]
+    
+    # Check if any library is missing
+    missing_libs = [path for path in lib_paths if not path.exists()]
+    if not missing_libs:
+        return lib_paths
 
-    if lib_path.exists():
-        return lib_path
-
-    """Download the webview library."""
-    download_url = _get_download_url()
+    # Download missing libraries
+    download_urls = _get_download_urls()
     system = platform.system().lower()
-        
+    
     lib_dir.mkdir(parents=True, exist_ok=True)
     
-    print(f"Downloading webview library from {download_url}")
+    for url, lib_path in zip(download_urls, lib_paths):
+        if lib_path.exists():
+            continue
+            
+        print(f"Downloading library from {url}")
+        try:
+            req = urllib.request.Request(
+                url,
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+            with urllib.request.urlopen(req) as response, open(lib_path, 'wb') as out_file:
+                out_file.write(response.read())
+        except Exception as e:
+            raise RuntimeError(f"Failed to download library: {e}")
+        
+        # Make the library executable on Unix-like systems
+        if system != "windows":
+            lib_path.chmod(lib_path.stat().st_mode | 0o755)
     
-    try:
-        # Create a request with a user agent to avoid GitHub raw content restrictions
-        req = urllib.request.Request(
-            download_url,
-            headers={'User-Agent': 'Mozilla/5.0'}
-        )
-        with urllib.request.urlopen(req) as response, open(lib_path, 'wb') as out_file:
-            out_file.write(response.read())
-    except Exception as e:
-        raise RuntimeError(f"Failed to download webview library: {e}")
-    
-    # Make the library executable on Unix-like systems
-    if system != "windows":
-        lib_path.chmod(lib_path.stat().st_mode | 0o755)
-    
-    return lib_path
+    return lib_paths
 
 class _WebviewLibrary:
     def __init__(self):
-        lib_name=_get_lib_name()
+        lib_names=_get_lib_names()
         try:
-            library_path = ctypes.util.find_library(lib_name)
+            library_path = ctypes.util.find_library(lib_names[0])
             if not library_path:
-                library_path = _be_sure_library()
-            self.lib = ctypes.cdll.LoadLibrary(str(library_path))
+                library_paths = _be_sure_libraries()
+            self.lib = ctypes.cdll.LoadLibrary(str(library_paths[0]))
         except Exception as e:
             print(f"Failed to load webview library: {e}")
             raise
