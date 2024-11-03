@@ -20,7 +20,7 @@ pip install webview_python
 ### Display Inline HTML:
 
 ```python
-from webview import Webview
+from webview.webview import Webview
 from urllib.parse import quote
 
 html = """
@@ -38,7 +38,7 @@ webview.run()
 ### Load Local HTML File:
 
 ```python
-from webview import Webview
+from webview.webview import Webview
 import os
 
 webview = Webview()
@@ -51,7 +51,7 @@ webview.run()
 ### Load Remote URL:
 
 ```python
-from webview import Webview
+from webview.webview import Webview
 webview = Webview()
 webview.navigate("https://www.python.org")
 webview.run()
@@ -60,7 +60,7 @@ webview.run()
 ### Python-JavaScript Bindings:
 
 ```python
-from webview import Webview, Size, SizeHint
+from webview.webview import Webview, Size, SizeHint
 from urllib.parse import quote
 
 webview = Webview(debug=True)
@@ -169,8 +169,19 @@ webview_python/
 ### Release Process
 
 For maintainers who want to release a new version:
+1. **Test**
+```bash
+# Install dependencies if not installed 
+pip install -r requirements.txt
 
-1. **Update Version**
+# Run tests
+pytest
+
+# Build wheels
+python -m build -n -w
+```
+
+2. **Update Version**
    ```bash
    # Ensure you have the latest code
    git pull origin main
@@ -179,7 +190,7 @@ For maintainers who want to release a new version:
    # Edit version = "x.y.z" to new version number
    ```
 
-2. **Create Release**
+3. **Create Release**
    ```bash
    # Commit changes
    old_version=0.99.0
@@ -197,7 +208,7 @@ For maintainers who want to release a new version:
         --notes "Full Changelog: https://github.com/congzhangzh/webview_python/compare/v${old_version}...v${new_version}"
    ```
 
-3. **Monitor Release**
+4. **Monitor Release**
    - Check GitHub Actions progress in the Actions tab
    - Verify package on PyPI after workflow completion
 
