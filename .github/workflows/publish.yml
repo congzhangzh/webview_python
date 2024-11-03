@@ -45,8 +45,10 @@ jobs:
           python -c "import os, sys; sys.path.append(os.path.join(os.getcwd(), 'src')); from _webview_ffi import _be_sure_libraries; _be_sure_libraries()"
 
       - name: Build wheels
-        run: |
-          python -m build --wheel
+        uses: pypa/cibuildwheel@v2.16.5
+        env:
+          CIBW_SKIP: "cp36-* cp37-* *-win32 *-manylinux_i686 *-musllinux*"  # 跳过旧版本和不需要的平台
+          CIBW_BEFORE_BUILD_LINUX: "apt-get update && apt-get install -y libwebkit2gtk-4.0-dev"
 
       - uses: actions/upload-artifact@v3
         with:
