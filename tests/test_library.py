@@ -1,5 +1,5 @@
 import unittest
-from _webview_ffi import _webview_lib
+from webview._webview_ffi import _webview_lib
 
 class TestLibrary(unittest.TestCase):
     def test_library_load(self):

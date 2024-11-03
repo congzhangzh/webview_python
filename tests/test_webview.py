@@ -1,7 +1,7 @@
 import os
 import platform
 import unittest
-from webview import Webview, Size, SizeHint
+from webview.webview import Webview, Size, SizeHint
 
 @unittest.skipIf(
     platform.system() == "Darwin" and bool(os.getenv("CI")),
