@@ -36,7 +36,7 @@ Repository = "https://github.com/congzhangzh/webview_python.git"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["webview.py", "ffi.py"]
+include = ["webview.py", "_webview_ffi.py"]
 namespaces = false
 
 [tool.black]
@@ -60,4 +60,12 @@ pythonpath = [
 ]
 testpaths = [
     "tests",
+]
+
+[tool.setuptools]
+# Mark as a binary package since we distribute platform-specific libraries
+# downloaded from webview_deno releases. This ensures platform-specific
+# wheel generation even though we don't compile any source code.
+ext-modules = [
+    { name = "webview._platform_binary", sources = [] }
 ]
