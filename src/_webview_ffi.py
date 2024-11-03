@@ -77,10 +77,6 @@ def _be_sure_libraries():
                 out_file.write(response.read())
         except Exception as e:
             raise RuntimeError(f"Failed to download library: {e}")
-        
-        # Make the library executable on Unix-like systems
-        if system != "windows":
-            lib_path.chmod(lib_path.stat().st_mode | 0o755)
     
     return lib_paths
 
