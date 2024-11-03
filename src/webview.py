@@ -2,7 +2,7 @@ from enum import IntEnum
 from typing import Optional, Callable, Any
 import json
 import ctypes
-from ffi import _webview_lib, _encode_c_string
+from _webview_ffi import _webview_lib, _encode_c_string
 
 class SizeHint(IntEnum):
     NONE = 0
