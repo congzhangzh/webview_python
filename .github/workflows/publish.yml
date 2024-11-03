@@ -57,9 +57,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: dist-${{ matrix.os }}
-          path: |
-            wheelhouse/*.whl
-            dist/*.whl
+          path: wheelhouse/*.whl
 
   publish:
     needs: [build_wheels]
@@ -77,6 +75,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: dist
+
+      - name: List to easy debug
+        run: find dist
 
       - name: Prepare distribution
         run: |
