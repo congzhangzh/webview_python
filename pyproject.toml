@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "webview_python"
@@ -34,30 +34,26 @@ Homepage = "https://github.com/congzhangzh/webview_python"
 Repository = "https://github.com/congzhangzh/webview_python.git"
 "Bug Tracker" = "https://github.com/congzhangzh/webview_python/issues"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["webview.py", "_webview_ffi.py"]
-namespaces = false
+[tool.hatch.build]
+artifacts = ["src/webview/lib/*"]
+only-include = ["src/webview"]
 
-[tool.black]
-line-length = 100
-target-version = ['py37']
+[tool.hatch.build.force-include]
+"src/webview/lib" = "webview/lib"
 
-[tool.isort]
-profile = "black"
-line_length = 100
-
-[tool.setuptools.package-data]
-webview = [
-    "lib/*.dll",    # Windows
-    "lib/*.so",     # Linux
-    "lib/*.dylib"   # macOS
+[tool.hatch.build.targets.wheel]
+packages = ["webview"]
+include-only-binary = ["*.dll", "*.so", "*.dylib"]
+is-pure=false
+platforms = [
+    "Windows",
+    "Linux",
+    "Darwin"
 ]
+
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
 
 [tool.pytest.ini_options]
-pythonpath = [
-    "src"
-]
-testpaths = [
-    "tests",
-]
+pythonpath = ["src"]
+testpaths = ["tests"]

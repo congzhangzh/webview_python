@@ -1,2 +1,5 @@
 pytest
 pytest-cov
+build
+hatchling
+twine
