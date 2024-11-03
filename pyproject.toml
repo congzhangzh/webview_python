@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "webview_python"
@@ -33,26 +33,6 @@ requires-python = ">=3.8"
 Homepage = "https://github.com/congzhangzh/webview_python"
 Repository = "https://github.com/congzhangzh/webview_python.git"
 "Bug Tracker" = "https://github.com/congzhangzh/webview_python/issues"
-
-[tool.hatch.build]
-artifacts = ["src/webview/lib/*"]
-only-include = ["src/webview"]
-
-[tool.hatch.build.force-include]
-"src/webview/lib" = "webview/lib"
-
-[tool.hatch.build.targets.wheel]
-packages = ["webview"]
-include-only-binary = ["*.dll", "*.so", "*.dylib"]
-is-pure=false
-platforms = [
-    "Windows",
-    "Linux",
-    "Darwin"
-]
-
-[tool.hatch.build.targets.sdist]
-ignore-vcs = true
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
