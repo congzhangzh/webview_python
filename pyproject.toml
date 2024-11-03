@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "webview_python"
-version = "0.99.10"
+version = "0.99.11"
 description = "Python bindings for the webview library, which completely follow deno_webview design and principles"
 readme = "README.md"
 license = { file = "LICENSE" }
