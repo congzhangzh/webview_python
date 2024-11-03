@@ -12,7 +12,7 @@ Python bindings for the webview library, allowing you to create desktop applicat
 ## Installation
 
 ```bash
-pip install webview
+pip install webview_python
 ```
 
 ## Usage
@@ -182,17 +182,19 @@ For maintainers who want to release a new version:
 2. **Create Release**
    ```bash
    # Commit changes
-   version=0.99.0
+   old_version=0.99.0
+   new_version=0.99.1
    git add pyproject.toml
-   git commit -m "Bump version to ${version}"
+   git commit -m "Bump version to ${new_version}"
    git push origin main
 
    # Create and push tag
-   git tag v${version}
-   git push origin v${version}
+   git tag v${new_version}
+   git push origin v${new_version}
 
    # Create GitHub release
-    gh release create v${version} --title "v${version}" --notes "Release version ${version}"
+    gh release create v${new_version} --title "${new_version}" \
+        --notes "Full Changelog: https://github.com/congzhangzh/webview_python/compare/v${old_version}...v${new_version}"
    ```
 
 3. **Monitor Release**
