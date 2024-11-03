@@ -51,6 +51,7 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_OUTPUT_DIR: dist
           #CIBW_BEFORE_BUILD_LINUX: "yum install -y webkit2gtk3-devel"
           #CIBW_BUILD_VERBOSITY: 1
 
