@@ -42,7 +42,7 @@ jobs:
 
       - name: Download platform binary
         run: |
-          python -c "import os, sys; sys.path.append(os.path.join(os.getcwd(), 'src')); from _webview_ffi import _be_sure_libraries; _be_sure_libraries()"
+          python -c "import os, sys; sys.path.append(os.path.join(os.getcwd(), 'src')); from webview._webview_ffi import _be_sure_libraries; _be_sure_libraries()"
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.5
