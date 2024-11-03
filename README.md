@@ -224,8 +224,8 @@ python -m build -n -w
 
 ## Roadmap
 
-- [ ] Publish to PyPI
-- [ ] Setup GitHub Actions for CI/CD
+- [x] Publish to PyPI
+- [x] Setup GitHub Actions for CI/CD
 - [ ] Add preact example
 - [ ] Add three.js example
 - [ ] Add three.js fiber example
