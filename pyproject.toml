@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "webview_python"
-version = "0.99.15"
+version = "0.99.16"
 description = "Python bindings for the webview library, which completely follow deno_webview design and principles"
 readme = "README.md"
 license = { file = "LICENSE" }
