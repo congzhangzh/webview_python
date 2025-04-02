@@ -150,11 +150,87 @@ webview.navigate(f"data:text/html,{quote(html)}")
 webview.run()
 ```
 
+### Async Python Functions with JavaScript:
+
+Webview Python supports binding asynchronous Python functions that can be called from JavaScript. This is useful for time-consuming operations that should not block the main thread.
+
+```python
+import asyncio
+from webview.webview import Webview, Size, SizeHint
+
+webview = Webview(debug=True)
+
+# Async Python function that can be called from JavaScript
+async def delayed_message(message, delay=1):
+    # Simulating a time-consuming operation
+    await asyncio.sleep(delay)
+    return f"Async response after {delay}s: {message}"
+
+# Async function with progress reporting
+async def process_with_progress(steps=5, step_time=1):
+    results = []
+    for i in range(1, steps + 1):
+        await asyncio.sleep(step_time)
+        # Report progress to JavaScript
+        progress = (i / steps) * 100
+        webview.eval(f"updateProgress({progress}, 'Processing: Step {i}/{steps}')")
+        results.append(f"Step {i} completed")
+    
+    return {
+        "status": "complete",
+        "steps": steps,
+        "results": results
+    }
+
+# Bind async Python functions
+webview.bind("delayedMessage", delayed_message)
+webview.bind("processWithProgress", process_with_progress)
+
+# HTML/JavaScript
+html = """
+<html>
+<head>
+    <script>
+        async function callAsyncPython() {
+            try {
+                document.getElementById('result').innerHTML = "Waiting for async response...";
+                const result = await delayedMessage("Hello from async world!", 2);
+                document.getElementById('result').innerHTML = result;
+            } catch (err) {
+                document.getElementById('result').innerHTML = `Error: ${err}`;
+            }
+        }
+        
+        function updateProgress(percent, message) {
+            document.getElementById('progress').style.width = percent + '%';
+            document.getElementById('progress-text').textContent = message;
+        }
+    </script>
+</head>
+<body>
+    <button onclick="callAsyncPython()">Call Async Python</button>
+    <div id="result"></div>
+    <div id="progress" style="background-color: #ddd; width: 100%">
+        <div id="progress-bar" style="height: 20px; background-color: #4CAF50; width: 0%"></div>
+    </div>
+    <div id="progress-text"></div>
+</body>
+</html>
+"""
+
+webview.navigate(f"data:text/html,{quote(html)}")
+webview.run()
+```
+
+For a more complete example, see [bind_in_local_async.py](examples/bind_in_local_async.py) and [bind_in_local_async.html](examples/bind_in_local_async.html) in the examples directory.
+
 ## Features
 
 - Create desktop applications using HTML, CSS, and JavaScript
 - Load local HTML files or remote URLs
 - Bidirectional Python-JavaScript communication
+- Support for async Python functions with JavaScript promises
+- Progress reporting for long-running tasks
 - Window size and title customization
 - Debug mode for development
 - Cross-platform support (Windows, macOS, Linux)
@@ -261,6 +337,7 @@ python -m build -n -w
 
 - [x] Publish to PyPI
 - [x] Setup GitHub Actions for CI/CD
+- [x] Add async function support 
 - [ ] Add preact example
 - [ ] Add three.js example
 - [ ] Add three.js fiber example
@@ -271,7 +348,11 @@ python -m build -n -w
 ## References
 
 - [Webview](https://github.com/webview/webview)
+- [webview C API IMPL](https://github.com/webview/webview/blob/master/core/include/webview/c_api_impl.hh)
+- [Webview C API](https://github.com/webview/webview/blob/master/src/webview.h)
 - [webview_deno](https://github.com/eliassjogreen/webview_deno)
+- [asyncio-guest](https://github.com/congzhangzh/asyncio-guest)
+- [asyncio-guest win32](https://github.com/congzhangzh/asyncio-guest/blob/master/asyncio_guest/asyncio_guest_win32.py)
 
 # License
 

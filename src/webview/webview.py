@@ -2,6 +2,8 @@ from enum import IntEnum
 from typing import Optional, Callable, Any
 import json
 import ctypes
+import asyncio
+import inspect
 from ._webview_ffi import _webview_lib, _encode_c_string
 
 class SizeHint(IntEnum):
@@ -59,13 +61,28 @@ class Webview:
     def bind(self, name: str, callback: Callable[..., Any]):
         def wrapper(seq: bytes, req: bytes, arg: int):
             args = json.loads(req.decode())
-            try:
-                result = callback(*args)
-                success = True
-            except Exception as e:
-                result = str(e)
-                success = False
-            self.return_(seq.decode(), 0 if success else 1, json.dumps(result))
+            seq_str = seq.decode()
+            
+            if inspect.iscoroutinefunction(callback):
+                # Handle async function
+                async def handle_async():
+                    try:
+                        result = await callback(*args)
+                        success = True
+                    except Exception as e:
+                        result = str(e)
+                        success = False
+                    self.return_(seq_str, 0 if success else 1, json.dumps(result))                        
+                # Schedule the coroutine to run
+                asyncio.ensure_future(handle_async())
+            else:
+                try:
+                    result = callback(*args)
+                    success = True
+                except Exception as e:
+                    result = str(e)
+                    success = False
+                self.return_(seq_str, 0 if success else 1, json.dumps(result))
 
         c_callback = _webview_lib.CFUNCTYPE(None, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_void_p)(wrapper)
         self._callbacks[name] = c_callback

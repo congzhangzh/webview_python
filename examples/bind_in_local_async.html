@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python-JavaScript 异步绑定演示</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            margin-top: 0;
+            color: #444;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .progress {
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-label {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+    <script>
+        // 简单延迟响应测试
+        async function testDelayedResponse() {
+            const resultDiv = document.getElementById('delayed-result');
+            resultDiv.innerHTML = '请等待...';
+            
+            try {
+                const seconds = parseFloat(document.getElementById('delay-seconds').value) || 1;
+                const result = await delayedResponse(seconds);
+                resultDiv.innerHTML = result;
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">错误: ${err}</span>`;
+            }
+        }
+        
+        // 进度报告测试
+        async function testProgress() {
+            const resultDiv = document.getElementById('progress-result');
+            const progressBar = document.getElementById('progress-bar');
+            const progressLabel = document.getElementById('progress-label');
+            
+            resultDiv.innerHTML = '任务执行中...';
+            progressBar.style.width = '0%';
+            progressLabel.textContent = '0%';
+            
+            try {
+                const steps = parseInt(document.getElementById('progress-steps').value) || 5;
+                const stepTime = parseFloat(document.getElementById('step-time').value) || 0.5;
+                
+                const result = await processWithProgress(steps, stepTime);
+                resultDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">错误: ${err}</span>`;
+            }
+        }
+        
+        // 用于从Python更新进度条
+        function updateProgress(percent, message) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressLabel = document.getElementById('progress-label');
+            
+            progressBar.style.width = `${percent}%`;
+            progressLabel.textContent = `${Math.round(percent)}% - ${message}`;
+        }
+        
+        // 模拟API请求测试
+        async function testFetchData() {
+            const resultDiv = document.getElementById('fetch-result');
+            resultDiv.innerHTML = '获取数据中...';
+            
+            try {
+                const delay = parseFloat(document.getElementById('fetch-delay').value) || 2;
+                const success = document.getElementById('fetch-success').checked;
+                
+                const result = await fetchData(delay, success);
+                resultDiv.innerHTML = `<pre>${JSON.stringify(result, null, 2)}</pre>`;
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">错误: ${err}</span>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Python-JavaScript 异步绑定演示</h1>
+        
+        <!-- 简单延迟响应 -->
+        <div class="demo-section">
+            <h2>简单延迟响应</h2>
+            <p>测试基本的异步函数，带有延迟响应</p>
+            
+            <div>
+                <label for="delay-seconds">延迟时间(秒): </label>
+                <input type="number" id="delay-seconds" min="0.1" step="0.1" value="1">
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button onclick="testDelayedResponse()">测试延迟响应</button>
+            </div>
+            
+            <div class="result" id="delayed-result">
+                结果将显示在这里
+            </div>
+        </div>
+        
+        <!-- 进度报告 -->
+        <div class="demo-section">
+            <h2>异步进度报告</h2>
+            <p>通过JavaScript回调函数报告异步操作的进度</p>
+            
+            <div>
+                <label for="progress-steps">步骤数: </label>
+                <input type="number" id="progress-steps" min="1" value="5">
+                
+                <label for="step-time" style="margin-left: 10px;">每步时间(秒): </label>
+                <input type="number" id="step-time" min="0.1" step="0.1" value="0.5">
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button onclick="testProgress()">开始任务</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div class="progress-label" id="progress-label">0%</div>
+            
+            <div class="result" id="progress-result">
+                结果将显示在这里
+            </div>
+        </div>
+        
+        <!-- 模拟API请求 -->
+        <div class="demo-section">
+            <h2>模拟异步API请求</h2>
+            <p>测试异步API请求和错误处理</p>
+            
+            <div>
+                <label for="fetch-delay">延迟时间(秒): </label>
+                <input type="number" id="fetch-delay" min="0.1" step="0.1" value="2">
+                
+                <label style="margin-left: 10px;">
+                    <input type="checkbox" id="fetch-success" checked> 请求成功
+                </label>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <button onclick="testFetchData()">获取数据</button>
+            </div>
+            
+            <div class="result" id="fetch-result">
+                结果将显示在这里
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
