@@ -10,7 +10,7 @@ def schedule_on_asyncio(coro):
         asyncio.run_coroutine_threadsafe(coro, loop)
     return schedule_coro
 
-def asyncio_guest_run(async_func, *async_func_args, run_sync_soon_threadsafe, run_sync_soon_not_threadsafe, done_callback):
+def asyncio_guest_run(async_func, *async_func_args, run_sync_soon_threadsafe, run_sync_soon_not_threadsafe=None, done_callback):
     """最简化的asyncio guest运行函数"""
     # 创建信号量用于线程协调
     sem = threading.Semaphore(0)
@@ -33,7 +33,7 @@ def asyncio_guest_run(async_func, *async_func_args, run_sync_soon_threadsafe, ru
         try:
             nonlocal count
             count += 1
-            print(f"ui trigger number: {count}")
+            print(f"ui trigger counter: {count}")
             if not loop.is_closed():
                 # 处理事件和回调
                 loop.process_events(events)
