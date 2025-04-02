@@ -41,11 +41,12 @@ Note: When using a custom download location, you must organize the libraries in 
 ```
 WEBVIEW_DOWNLOAD_BASE/
 ├── 0.9.0/
-│   ├── webview.dll
-│   ├── WebView2Loader.dll
-│   ├── libwebview.so
-│   ├── libwebview.x86_64.dylib
-│   └── libwebview.aarch64.dylib
+│   ├── webview.dll               # Windows x64
+│   ├── WebView2Loader.dll        # Windows x64
+│   ├── libwebview.x86_64.so      # Linux x64
+│   ├── libwebview.aarch64.so     # Linux ARM64
+│   ├── libwebview.x86_64.dylib   # macOS x64
+│   └── libwebview.aarch64.dylib  # macOS ARM64
 └── other-versions/...
 ```
 

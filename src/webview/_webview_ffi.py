@@ -46,7 +46,10 @@ def _get_lib_names():
         else:
             return ["libwebview.x86_64.dylib"]
     else:  # linux
-        return ["libwebview.so"]
+        if machine == "aarch64" or machine == "arm64":
+            return ["libwebview.aarch64.so"]
+        else:
+            return ["libwebview.x86_64.so"]
 
 def _get_download_urls():
     """Get the appropriate download URLs based on the platform."""
