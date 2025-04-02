@@ -49,17 +49,17 @@
         
         // 从全局变量中安全获取函数，避免重新声明
         // 注意：不再使用解构赋值，避免变量声明冲突
-        const myRender = preact.render;
-        const myH = preact.h;
-        const myUseState = preactHooks.useState;
-        const myUseEffect = preactHooks.useEffect;
-        const myHtml = htm.bind(myH);  // 使用myH而不是h
+        const render = preact.render;
+        // const myH = preact.h;
+        const useState = preactHooks.useState;
+        const useEffect = preactHooks.useEffect;
+        const html = htm.bind(preact.h);  // 使用myH而不是h
 
         function Counter() {
-            const [count, setCount] = myUseState(null);
-            const [loading, setLoading] = myUseState(true);
-            const [updating, setUpdating] = myUseState(false);
-            const [error, setError] = myUseState(null);
+            const [count, setCount] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [updating, setUpdating] = useState(false);
+            const [error, setError] = useState(null);
             
             // 从Python获取计数
             const fetchCount = async () => {
@@ -77,7 +77,7 @@
             };
             
             // 初始加载
-            myUseEffect(() => {
+            useEffect(() => {
                 fetchCount();
             }, []);
             
@@ -113,17 +113,17 @@
             
             // 显示加载状态
             if (loading) {
-                return myHtml`<div>加载中...</div>`;
+                return html`<div>加载中...</div>`;
             }
             
-            return myHtml`
+            return html`
                 <div class=${updating ? 'loading' : ''}>
                     <h1>Preact计数器示例</h1>
                     <p>通过Python后端管理状态（完全离线）</p>
                     
                     <div class="counter">${count !== null ? count : '...'}</div>
                     
-                    ${error && myHtml`<div class="error">${error}</div>`}
+                    ${error && html`<div class="error">${error}</div>`}
                     
                     <div>
                         <button 
@@ -144,7 +144,7 @@
         }
         
         // 渲染应用
-        myRender(myHtml`<${Counter} />`, document.getElementById('app'));
+        render(html`<${Counter} />`, document.getElementById('app'));
     </script>
 </body>
 </html> 
