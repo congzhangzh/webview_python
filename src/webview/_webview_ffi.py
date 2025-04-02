@@ -12,7 +12,7 @@ def _encode_c_string(s: str) -> bytes:
 
 def _get_webview_version():
     """Get webview version from environment variable or use default"""
-    return os.getenv("WEBVIEW_VERSION", "0.8.1")
+    return os.getenv("WEBVIEW_VERSION", "0.9.0")
 
 def _get_lib_names():
     """Get platform-specific library names."""
