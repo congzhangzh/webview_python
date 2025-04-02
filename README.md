@@ -340,12 +340,15 @@ python -m build -n -w
 - [x] Publish to PyPI
 - [x] Setup GitHub Actions for CI/CD
 - [x] Add async function support 
-- [ ] Add preact example
+- [x] Add preact example
 - [ ] Add three.js example
 - [ ] Add three.js fiber example
 - [ ] Add screen saver 4 window example
 - [ ] Add MRI principle demo example by three.js fiber
 - [ ] Add screen saver 4 windows with MRI principle demo example by three.js fiber
+
+## TBD
+- [x] CTRL-C support
 
 ## References
 
