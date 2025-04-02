@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离线Preact示例</title>
+    <style>
+        body { 
+            font-family: system-ui, sans-serif; 
+            max-width: 500px; 
+            margin: 0 auto; 
+            padding: 2rem; 
+            text-align: center;
+        }
+        button {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .counter {
+            font-size: 2rem;
+            margin: 2rem 0;
+        }
+        .loading {
+            opacity: 0.5;
+        }
+        .error {
+            color: red;
+            margin: 1rem 0;
+        }
+    </style>
+    <!-- 使用浏览器版本的库文件 -->
+    <script src="./preact.min.js"></script>
+    <script src="./hooks.min.js"></script>
+    <script src="./htm.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // 调试：显示全局变量
+        console.log("全局对象检查:", {
+            preact: typeof preact !== 'undefined',
+            h: typeof h !== 'undefined',
+            preactHooks: typeof preactHooks !== 'undefined',
+            htm: typeof htm !== 'undefined'
+        });
+        
+        // 从全局变量中安全获取函数，避免重新声明
+        // 注意：不再使用解构赋值，避免变量声明冲突
+        const myRender = preact.render;
+        const myH = preact.h;
+        const myUseState = preactHooks.useState;
+        const myUseEffect = preactHooks.useEffect;
+        const myHtml = htm.bind(myH);  // 使用myH而不是h
+
+        function Counter() {
+            const [count, setCount] = myUseState(null);
+            const [loading, setLoading] = myUseState(true);
+            const [updating, setUpdating] = myUseState(false);
+            const [error, setError] = myUseState(null);
+            
+            // 从Python获取计数
+            const fetchCount = async () => {
+                try {
+                    setLoading(true);
+                    setError(null);
+                    const result = await getCount();
+                    setCount(result);
+                } catch (err) {
+                    setError('获取计数失败: ' + (err.message || err));
+                    console.error('获取计数错误:', err);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            
+            // 初始加载
+            myUseEffect(() => {
+                fetchCount();
+            }, []);
+            
+            // 增加计数
+            const handleIncrement = async () => {
+                try {
+                    setUpdating(true);
+                    setError(null);
+                    const newCount = await increment();
+                    setCount(newCount);
+                } catch (err) {
+                    setError('增加计数失败: ' + (err.message || err));
+                    console.error('增加计数错误:', err);
+                } finally {
+                    setUpdating(false);
+                }
+            };
+            
+            // 减少计数
+            const handleDecrement = async () => {
+                try {
+                    setUpdating(true);
+                    setError(null);
+                    const newCount = await decrement();
+                    setCount(newCount);
+                } catch (err) {
+                    setError('减少计数失败: ' + (err.message || err));
+                    console.error('减少计数错误:', err);
+                } finally {
+                    setUpdating(false);
+                }
+            };
+            
+            // 显示加载状态
+            if (loading) {
+                return myHtml`<div>加载中...</div>`;
+            }
+            
+            return myHtml`
+                <div class=${updating ? 'loading' : ''}>
+                    <h1>Preact计数器示例</h1>
+                    <p>通过Python后端管理状态（完全离线）</p>
+                    
+                    <div class="counter">${count !== null ? count : '...'}</div>
+                    
+                    ${error && myHtml`<div class="error">${error}</div>`}
+                    
+                    <div>
+                        <button 
+                            onClick=${handleDecrement} 
+                            disabled=${updating}
+                        >
+                            减少
+                        </button>
+                        <button 
+                            onClick=${handleIncrement} 
+                            disabled=${updating}
+                        >
+                            增加
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 渲染应用
+        myRender(myHtml`<${Counter} />`, document.getElementById('app'));
+    </script>
+</body>
+</html> 

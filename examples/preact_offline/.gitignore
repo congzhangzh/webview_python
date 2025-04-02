@@ -1,0 +1,8 @@
+# 忽略JS库文件
+*.min.js
+
+# 可能的缓存/临时文件
+__pycache__/
+*.py[cod]
+*$py.class
+.DS_Store 
