@@ -154,6 +154,8 @@ webview.run()
 
 Webview Python supports binding asynchronous Python functions that can be called from JavaScript. This is useful for time-consuming operations that should not block the main thread.
 
+Demo: [bind_in_local_async_by_asyncio_guest_win32_wip.py](examples/async_with_asyncio_guest_run/bind_in_local_async_by_asyncio_guest_win32_wip.py), [bind_in_local_async.html](examples/async_with_asyncio_guest_run/bind_in_local_async.html)
+
 ```python
 import asyncio
 from webview.webview import Webview, Size, SizeHint
