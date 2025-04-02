@@ -15,6 +15,40 @@ Python bindings for the webview library, allowing you to create desktop applicat
 pip install webview_python
 ```
 
+## Environment Variables
+
+Webview Python supports the following environment variables:
+
+- `WEBVIEW_VERSION`: Specify the version of the webview library to use (default: "0.9.0")
+- `WEBVIEW_DOWNLOAD_BASE`: Specify the base URL or file path for downloading webview libraries (default: GitHub releases)
+  - Can be a web URL: `https://internal-server.com/webview-libs`
+  - Network share: `\\server\share\webview-libs` or `/mnt/server/webview-libs`
+  - Local path: `/path/to/libs` or `C:\path\to\libs`
+
+Example usage:
+```bash
+# Using an internal HTTP server
+export WEBVIEW_DOWNLOAD_BASE="http://internal-server.com/webview-libs"
+
+# Using a network share on Windows
+set WEBVIEW_DOWNLOAD_BASE=\\\\server\\share\\webview-libs
+
+# Using a mounted path on Linux
+export WEBVIEW_DOWNLOAD_BASE="/mnt/server/webview-libs"
+```
+
+Note: When using a custom download location, you must organize the libraries in the same structure as the GitHub releases:
+```
+WEBVIEW_DOWNLOAD_BASE/
+├── 0.9.0/
+│   ├── webview.dll
+│   ├── WebView2Loader.dll
+│   ├── libwebview.so
+│   ├── libwebview.x86_64.dylib
+│   └── libwebview.aarch64.dylib
+└── other-versions/...
+```
+
 ## Usage
 
 ### Display Inline HTML:

@@ -6,6 +6,7 @@ import urllib.request
 from pathlib import Path
 from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE
 import ctypes.util
+import shutil
 
 def _encode_c_string(s: str) -> bytes:
     return s.encode("utf-8")
@@ -13,6 +14,21 @@ def _encode_c_string(s: str) -> bytes:
 def _get_webview_version():
     """Get webview version from environment variable or use default"""
     return os.getenv("WEBVIEW_VERSION", "0.9.0")
+
+def _get_download_base():
+    """Get download base URL or path from environment variable or use default.
+    
+    This allows users to specify a custom location (URL or file path) to download
+    libraries from, which is particularly useful for internal deployments or 
+    offline environments.
+    
+    Returns:
+        str: The base URL or path for downloading libraries
+    """
+    return os.getenv(
+        "WEBVIEW_DOWNLOAD_BASE", 
+        "https://github.com/webview/webview_deno/releases/download"
+    )
 
 def _get_lib_names():
     """Get platform-specific library names."""
@@ -35,8 +51,18 @@ def _get_lib_names():
 def _get_download_urls():
     """Get the appropriate download URLs based on the platform."""
     version = _get_webview_version()
-    return [f"https://github.com/webview/webview_deno/releases/download/{version}/{lib_name}" 
-            for lib_name in _get_lib_names()]
+    base_url = _get_download_base()
+    
+    # Handle both URL and file path formats
+    if base_url.startswith(("http://", "https://", "file://")):
+        # For URLs, use / separator
+        return [f"{base_url}/{version}/{lib_name}" 
+                for lib_name in _get_lib_names()]
+    else:
+        # For file paths, use OS-specific path handling
+        base_path = Path(base_url)
+        return [str(base_path / version / lib_name)
+                for lib_name in _get_lib_names()]
 
 def _be_sure_libraries():
     """Ensure libraries exist and return paths."""
@@ -57,7 +83,7 @@ def _be_sure_libraries():
     if not missing_libs:
         return lib_paths
 
-    # Download missing libraries
+    # Download or copy missing libraries
     download_urls = _get_download_urls()
     system = platform.system().lower()
     
@@ -67,16 +93,30 @@ def _be_sure_libraries():
         if lib_path.exists():
             continue
             
-        print(f"Downloading library from {url}")
+        print(f"Getting library from {url}")
         try:
-            req = urllib.request.Request(
-                url,
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            with urllib.request.urlopen(req) as response, open(lib_path, 'wb') as out_file:
-                out_file.write(response.read())
+            # Handle different URL types
+            if url.startswith(("http://", "https://")):
+                # Web URL - download
+                req = urllib.request.Request(
+                    url,
+                    headers={'User-Agent': 'Mozilla/5.0'}
+                )
+                with urllib.request.urlopen(req) as response, open(lib_path, 'wb') as out_file:
+                    out_file.write(response.read())
+            elif url.startswith("file://"):
+                # File URL - copy from local filesystem
+                source_path = url[7:]  # Strip 'file://' prefix
+                shutil.copy2(source_path, lib_path)
+            else:
+                # Assume it's a filesystem path
+                source_path = url
+                if os.path.exists(source_path):
+                    shutil.copy2(source_path, lib_path)
+                else:
+                    raise FileNotFoundError(f"Could not find library at {source_path}")
         except Exception as e:
-            raise RuntimeError(f"Failed to download library: {e}")
+            raise RuntimeError(f"Failed to get library from {url}: {e}")
     
     return lib_paths
 
