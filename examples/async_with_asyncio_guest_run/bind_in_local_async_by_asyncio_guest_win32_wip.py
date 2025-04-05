@@ -23,9 +23,6 @@ import win32api
 import win32con
 import win32gui
 
-#TODO why we need this?
-from outcome import Error
-
 import asyncio
 from webview import Webview, SizeHint, Size
 
@@ -93,13 +90,15 @@ class WebviewHost:
         trio_functions.put(func)
         win32api.PostMessage(self.msg_hwnd, ASYNCIO_MSG, 0, 0)
 
-    def done_callback(self, outcome):
+    def done_callback(self, result):
         """non-blocking request to end the main loop"""
-        print(f"Outcome: {outcome}")
-        print(f"大功告成: {outcome}")
-        if isinstance(outcome, Error):
-            exc = outcome.error
+        print(f"Main Task Result: {result}")
+        if isinstance(result, Exception):
+            exc=result
             traceback.print_exception(type(exc), exc, exc.__traceback__)
+            exitcode = 1
+        elif isinstance(result, BaseException):
+            # TODO: special case for asyncio.CancelledError and other BaseException?
             exitcode = 1
         else:
             exitcode = 0
