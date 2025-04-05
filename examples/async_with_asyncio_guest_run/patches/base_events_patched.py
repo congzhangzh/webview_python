@@ -2089,9 +2089,7 @@ class BaseEventLoop(events.AbstractEventLoop):
             if not handle._cancelled:
                 self._ready.append(handle)
         
-        # 执行就绪的回调
-        ntodo = len(self._ready)
-        for i in range(ntodo):
+        while self._ready:
             handle = self._ready.popleft()
             if not handle._cancelled:
                 handle._run()
