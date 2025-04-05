@@ -306,9 +306,9 @@ python -m build -n -w
 3. **Create Release**
    ```bash
    # Commit changes
-   old_version=1.1.0
-   new_version=1.1.1
-   git add pyproject.toml
+   old_version=1.1.1
+   new_version=1.1.2
+   git add pyproject.toml README.md
    git commit -m "Bump version to ${new_version}"
    git push origin main
 
