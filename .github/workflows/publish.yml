@@ -4,6 +4,13 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -44,13 +51,15 @@ jobs:
         run: |
           python -c "import os, sys; sys.path.append(os.path.join(os.getcwd(), 'src')); from webview._webview_ffi import _be_sure_libraries; _be_sure_libraries()"
 
-      - name: Build wheels
+      - name: Build 
+        # https://github.com/pypa/cibuildwheel
         uses: pypa/cibuildwheel@v2.16.5
         env:
-          CIBW_BUILD: "cp38-* cp39-* cp310-* cp311-* cp312-* cp313-*"
+          CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
-          CIBW_ARCHS_LINUX: "x86_64"
-          CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_ARCHS_LINUX: "x86_64 aarch64"
+          #https://cibuildwheel.pypa.io/en/stable/options/#archs
+          CIBW_ARCHS_WINDOWS: "AMD64 ARM64"
           CIBW_SKIP: "*-musllinux*"
           #CIBW_BEFORE_BUILD_LINUX: "yum install -y webkit2gtk3-devel"
           #CIBW_BUILD_VERBOSITY: 1
@@ -86,6 +95,7 @@ jobs:
           cp dist/*/*.whl final_dist/
 
       - name: Publish to PyPI
+        if: github.event_name == 'release'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
