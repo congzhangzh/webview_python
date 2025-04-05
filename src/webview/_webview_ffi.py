@@ -7,7 +7,7 @@ from pathlib import Path
 from ctypes import c_int, c_char_p, c_void_p, CFUNCTYPE
 import ctypes.util
 import shutil
-
+import logging
 def _encode_c_string(s: str) -> bytes:
     return s.encode("utf-8")
 
@@ -70,25 +70,29 @@ def _get_download_urls():
 def _be_sure_libraries():
     """Ensure libraries exist and return paths."""
     if getattr(sys, 'frozen', False):
-        if hasattr(sys, '_MEIPASS'):
-            base_dir = Path(sys._MEIPASS)
-        else:
-            base_dir = Path(sys.executable).parent / '_internal'
+        # if hasattr(sys, '_MEIPASS'):
+        #     base_dir = Path(sys._MEIPASS)
+        # else:
+        #     base_dir = Path(sys.executable).parent / '_internal'/'webview'
+        base_dir = Path(sys.executable).parent / '_internal'/'webview'
     else:
         base_dir = Path(__file__).parent
     
-    lib_dir = base_dir / "lib"
+    #lib_dir = base_dir / "lib"
+    lib_dir = base_dir
+    logging.info(f"webview lib_dir: {lib_dir}")
     lib_names = _get_lib_names()
+    logging.info(f"webview lib_names: {lib_names}")
     lib_paths = [lib_dir / lib_name for lib_name in lib_names]
-    
+    logging.info(f"webview lib_paths: {lib_paths}")
     # Check if any library is missing
     missing_libs = [path for path in lib_paths if not path.exists()]
     if not missing_libs:
         return lib_paths
-
+    else:
+        logging.warning(f"Missing libraries: {missing_libs}")
     # Download or copy missing libraries
     download_urls = _get_download_urls()
-    system = platform.system().lower()
     
     lib_dir.mkdir(parents=True, exist_ok=True)
     
@@ -96,7 +100,9 @@ def _be_sure_libraries():
         if lib_path.exists():
             continue
             
-        print(f"Getting library from {url}")
+        print(f"Getting library from {url}, writing to {lib_path}")
+        logging.warning(f"Getting library from {url}, writing to {lib_path}")
+
         try:
             # Handle different URL types
             if url.startswith(("http://", "https://")):
@@ -130,7 +136,8 @@ class _WebviewLibrary:
             library_path = ctypes.util.find_library(lib_names[0])
             if not library_path:
                 library_paths = _be_sure_libraries()
-            self.lib = ctypes.cdll.LoadLibrary(str(library_paths[0]))
+                library_path = library_paths[0]            
+            self.lib = ctypes.cdll.LoadLibrary(str(library_path))
         except Exception as e:
             print(f"Failed to load webview library: {e}")
             raise

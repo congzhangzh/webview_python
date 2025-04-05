@@ -93,3 +93,7 @@ develop-eggs
 lib
 lib64
 *.c
+
+webview.dll
+WebView2Loader.dll
+
