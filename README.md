@@ -9,6 +9,14 @@
 
 Python bindings for the webview library, allowing you to create desktop applications with web technologies.
 
+## Production-Ready Applications
+
+For enterprise-grade desktop applications, see the complete template: [python_desktop_app_with_vue_template](https://github.com/congzhangzh/python_desktop_app_with_vue_template). This project provides a full solution for frontend-backend integration, development workflow, debugging, and deployment.
+
+## Alternative: WebUI
+
+While developing the production template, I discovered [WebUI](https://webui.me/), which appears to be an earlier project than webview/webview (though I haven't verified this claim). WebUI might be worth investigating as an alternative, but I haven't had time to do a thorough comparison. If anyone has insights or experience with WebUI vs webview, I'd appreciate hearing from you.
+
 ## Installation
 
 ```bash
