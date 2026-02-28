@@ -1,12 +1,11 @@
 name: Publish to PyPI
 
 on:
-  release:
-    types: [published]
-  workflow_dispatch:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -98,7 +97,7 @@ jobs:
           cp dist/*/*.whl final_dist/
 
       - name: Publish to PyPI
-        if: github.event_name == 'release'
+        if: startsWith(github.ref, 'refs/tags/v')
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
