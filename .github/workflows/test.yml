@@ -11,19 +11,21 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.13", "3.14"]
 
     runs-on: ${{ matrix.os }}
-    
+
     env:
       CI: true
-    
+
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Python 3.13
+
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: "3.13"
+          python-version: "${{ matrix.python-version }}"
+          allow-prereleases: true
       
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
