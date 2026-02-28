@@ -57,7 +57,8 @@ jobs:
         # https://github.com/pypa/cibuildwheel
         uses: pypa/cibuildwheel@v3.3.1
         env:
-          CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-*"
+          CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-* cp315-*"
+          CIBW_ENABLE: "cpython-prerelease"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
           #https://cibuildwheel.pypa.io/en/stable/options/#archs
